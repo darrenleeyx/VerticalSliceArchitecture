@@ -1,0 +1,29 @@
+@baseUrl = https://localhost:7003
+
+### Create a new user
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "darren",
+  "email": "darren@example.com"
+}
+
+###
+
+### Get all users
+GET {{baseUrl}}/users
+Accept: application/json
+
+###
+
+### Get user by ID
+# Replace this GUID with a real one from the create response
+GET {{baseUrl}}/users/b93d94b8-c186-45a7-bbd2-6517608b6642
+Accept: application/json
+
+###
+
+### Delete user by ID
+DELETE {{baseUrl}}/users/b93d94b8-c186-45a7-bbd2-6517608b6642
+Accept: application/json
