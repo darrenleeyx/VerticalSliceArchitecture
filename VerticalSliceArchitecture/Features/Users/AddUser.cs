@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Net.Mime;
+using VerticalSliceArchitecture.Common.Abstractions;
+using VerticalSliceArchitecture.Common.Abstractions.Repositories;
 using VerticalSliceArchitecture.Common.Contracts;
 using VerticalSliceArchitecture.Common.Endpoints;
-using VerticalSliceArchitecture.Domain;
-using VerticalSliceArchitecture.Infrastructure;
+using VerticalSliceArchitecture.Domain.Users;
 
 namespace VerticalSliceArchitecture.Features.Users;
 
@@ -47,7 +47,8 @@ public static class AddUser
     public static async Task<IResult> Handle(
         [FromBody] Request request,
         [FromServices] IValidator<Request> validator,
-        [FromServices] AppDbContext dbContext,
+        [FromServices] IReadWriteUserRepository userRepository,
+        [FromServices] IUnitOfWork unitOfWork,
         CancellationToken cancellationToken = default)
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -57,7 +58,7 @@ public static class AddUser
             return Results.ValidationProblem(validationResult.ToDictionary());
         }
 
-        var exists = await dbContext.Users.AnyAsync(u => u.Email == request.Email, cancellationToken);
+        var exists = await userRepository.ExistsEmailAsync(request.Email, cancellationToken);
 
         if (exists)
         {
@@ -68,8 +69,8 @@ public static class AddUser
 
         var user = User.Create(request.Name, request.Email);
 
-        dbContext.Users.Add(user);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        userRepository.Add(user);
+        await unitOfWork.CommitChangesAsync(cancellationToken);
 
         return Results.Created($"/users/{user.Id}", new Response(user.Id.Value));
     }

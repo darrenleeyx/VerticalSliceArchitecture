@@ -1,9 +1,12 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using VerticalSliceArchitecture.Common.Abstractions;
+using VerticalSliceArchitecture.Common.Abstractions.Repositories;
 using VerticalSliceArchitecture.Common.Endpoints;
 using VerticalSliceArchitecture.Common.Pipelines;
 using VerticalSliceArchitecture.Infrastructure;
+using VerticalSliceArchitecture.Infrastructure.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 var host = builder.Host;
@@ -27,6 +30,10 @@ try
         // Just for testing purposes
         options.UseInMemoryDatabase("AppDb");
     });
+
+    services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AppDbContext>());
+    services.AddScoped<IReadOnlyUserRepository, UserRepository>();
+    services.AddScoped<IReadWriteUserRepository, UserRepository>();
 
     var app = builder.Build();
 

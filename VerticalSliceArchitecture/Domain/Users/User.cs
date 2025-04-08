@@ -1,4 +1,4 @@
-﻿namespace VerticalSliceArchitecture.Domain;
+﻿namespace VerticalSliceArchitecture.Domain.Users;
 
 public record UserId(Guid Value) : IEntityId<Guid>;
 

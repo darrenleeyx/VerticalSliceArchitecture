@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using VerticalSliceArchitecture.Common.Abstractions.Repositories;
 using VerticalSliceArchitecture.Common.Contracts;
+using VerticalSliceArchitecture.Common.Contracts.Users;
 using VerticalSliceArchitecture.Common.Endpoints;
-using VerticalSliceArchitecture.Infrastructure;
+using VerticalSliceArchitecture.Domain.Users;
 
 namespace VerticalSliceArchitecture.Features.Users;
 
 public static class GetUser
 {
     public record Response(UserDto Value) : IResponse<UserDto>;
-    public record UserDto(string Name, string Email);
 
     public sealed class Endpoint : IEndpoint
     {
@@ -30,14 +30,10 @@ public static class GetUser
 
     public static async Task<IResult> Handle(
         [FromRoute] Guid id,
-        [FromServices] AppDbContext dbContext,
+        [FromServices] IReadOnlyUserRepository userRepository,
         CancellationToken cancellationToken = default)
     {
-        var userDto = await dbContext.Users
-            .AsNoTracking()
-            .Where(x => x.Id == new Domain.UserId(id))
-            .Select(x => new UserDto(x.Name, x.Email))
-            .FirstOrDefaultAsync(cancellationToken);
+        var userDto = await userRepository.GetDtoByIdAsync(new UserId(id), cancellationToken);
 
         return userDto is null
             ? Results.Problem(

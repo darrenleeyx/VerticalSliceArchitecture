@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using VerticalSliceArchitecture.Common.Abstractions.Repositories;
 using VerticalSliceArchitecture.Common.Contracts;
+using VerticalSliceArchitecture.Common.Contracts.Users;
 using VerticalSliceArchitecture.Common.Endpoints;
 using VerticalSliceArchitecture.Infrastructure;
 
@@ -9,7 +10,6 @@ namespace VerticalSliceArchitecture.Features.Users;
 public static class GetAllUsers
 {
     public record Response(List<UserDto> Value) : IResponse<List<UserDto>>;
-    public record UserDto(string Name, string Email);
 
     public sealed class Endpoint : IEndpoint
     {
@@ -29,12 +29,10 @@ public static class GetAllUsers
 
     public static async Task<IResult> Handle(
         [FromServices] AppDbContext dbContext,
+        [FromServices] IReadOnlyUserRepository userRepository,
         CancellationToken cancellationToken = default)
     {
-        var userDtos = await dbContext.Users
-            .AsNoTracking()
-            .Select(x => new UserDto(x.Name, x.Email))
-            .ToListAsync(cancellationToken);
+        var userDtos = await userRepository.GetAllDtosAsync(cancellationToken);
 
         Response response = new(userDtos);
 

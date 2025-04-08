@@ -1,8 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using VerticalSliceArchitecture.Common.Abstractions;
+using VerticalSliceArchitecture.Common.Abstractions.Repositories;
 using VerticalSliceArchitecture.Common.Endpoints;
-using VerticalSliceArchitecture.Infrastructure;
+using VerticalSliceArchitecture.Domain.Users;
 
 namespace VerticalSliceArchitecture.Features.Users;
 
@@ -26,11 +27,11 @@ public static class DeleteUser
 
     public static async Task<IResult> Handle(
         [FromRoute] Guid id,
-        [FromServices] AppDbContext dbContext,
+        [FromServices] IReadWriteUserRepository userRepository,
+        [FromServices] IUnitOfWork unitOfWork,
         CancellationToken cancellationToken = default)
     {
-        var user = await dbContext.Users
-            .SingleOrDefaultAsync(x => x.Id == new Domain.UserId(id), cancellationToken);
+        var user = await userRepository.GetByIdAsync(new UserId(id), track: true, cancellationToken);
 
         if (user is null)
         {
@@ -39,8 +40,8 @@ public static class DeleteUser
                 statusCode: StatusCodes.Status404NotFound);
         }
 
-        dbContext.Users.Remove(user);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        userRepository.Remove(user);
+        await unitOfWork.CommitChangesAsync(cancellationToken);
 
         return Results.NoContent();
     }

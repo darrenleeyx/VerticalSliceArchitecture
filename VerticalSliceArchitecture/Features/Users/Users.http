@@ -19,11 +19,11 @@ Accept: application/json
 
 ### Get user by ID
 # Replace this GUID with a real one from the create response
-GET {{baseUrl}}/users/b93d94b8-c186-45a7-bbd2-6517608b6642
+GET {{baseUrl}}/users/1bd06c02-86ce-4a3f-8bea-9ee9e7798c9d
 Accept: application/json
 
 ###
 
 ### Delete user by ID
-DELETE {{baseUrl}}/users/b93d94b8-c186-45a7-bbd2-6517608b6642
+DELETE {{baseUrl}}/users/1bd06c02-86ce-4a3f-8bea-9ee9e7798c9d
 Accept: application/json

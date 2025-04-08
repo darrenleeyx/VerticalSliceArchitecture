@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using VerticalSliceArchitecture.Domain;
+using VerticalSliceArchitecture.Domain.Users;
 
-namespace VerticalSliceArchitecture.Infrastructure.Configs;
+namespace VerticalSliceArchitecture.Infrastructure.Users;
 
 public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {

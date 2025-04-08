@@ -1,4 +1,4 @@
-﻿using VerticalSliceArchitecture.Domain;
+﻿using VerticalSliceArchitecture.Domain.Users;
 
 namespace VerticalSliceArchitecture.Infrastructure;
 
