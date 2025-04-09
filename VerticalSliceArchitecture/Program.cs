@@ -1,3 +1,5 @@
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using VerticalSliceArchitecture.Common.Registrations;
 using VerticalSliceArchitecture.Features;
@@ -22,6 +24,9 @@ try
 
         services.RegisterFeatures()
                 .RegisterInfrastructure(configuration);
+
+        services.AddHealthChecks()
+            .AddDbContextCheck<AppDbContext>("Database");
     }
 
     var app = builder.Build();
@@ -32,6 +37,10 @@ try
         }
 
         app.MapOpenApi();
+        app.MapHealthChecks("/health", new HealthCheckOptions
+        {
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
 
         app.UseFeatures()
            .UseSwaggerPage()
