@@ -5,19 +5,19 @@ namespace VerticalSliceArchitecture.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddPersistence();
+        services.AddPersistence(configuration);
 
         return services;
     }
 
-    private static IServiceCollection AddPersistence(this IServiceCollection services)
+    private static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
         {
             // Just for testing purposes
-            options.UseInMemoryDatabase("AppDb");
+            options.UseInMemoryDatabase(configuration.GetConnectionString("Database")!);
         });
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AppDbContext>());

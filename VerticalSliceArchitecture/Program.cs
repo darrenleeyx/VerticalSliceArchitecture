@@ -3,45 +3,50 @@ using VerticalSliceArchitecture;
 using VerticalSliceArchitecture.Features;
 using VerticalSliceArchitecture.Infrastructure;
 
-var builder = WebApplication.CreateBuilder(args);
-var host = builder.Host;
-var services = builder.Services;
-
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
 try
 {
-    host.UseSerilog();
-
-    services
-        .AddProblemDetails()
-        .AddOpenApi()
-        .AddFeatures()
-        .AddInfrastructure();
-
-    var app = builder.Build();
-
-    if (app.Environment.IsDevelopment())
+    var builder = WebApplication.CreateBuilder(args);
     {
-        app.Services.Seed();
+        var host = builder.Host;
+        var services = builder.Services;
+        var configuration = builder.Configuration;
+
+        host.UseSerilog();
+
+        services
+            .AddProblemDetails()
+            .AddOpenApi()
+            .AddFeatures()
+            .AddInfrastructure(configuration);
     }
 
-    app.MapOpenApi();
+    var app = builder.Build();
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            app.Services.Seed();
+        }
 
-    app
-        .UseFeatures()
-        .UseSwaggerPage()
-        .UseMiddlewares();
+        app.MapOpenApi();
 
-    app.UseHttpsRedirection();
+        app
+            .UseFeatures()
+            .UseSwaggerPage()
+            .UseMiddlewares();
 
-    app.Run();
+        app.UseHttpsRedirection();
+
+        app.Run();
+    }
 }
 catch (Exception ex)
 {
     Log.Logger.Error(ex, "An error occurred during application startup.");
+    Environment.Exit(1);
 }
 finally
 {
