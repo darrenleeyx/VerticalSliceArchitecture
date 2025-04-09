@@ -15,7 +15,7 @@ try
         var services = builder.Services;
         var configuration = builder.Configuration;
 
-        host.UseSerilog();
+        host.RegisterSerilog(configuration);
 
         services.AddProblemDetails()
                 .AddOpenApi();
