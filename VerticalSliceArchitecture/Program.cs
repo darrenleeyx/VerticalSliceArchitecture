@@ -1,12 +1,7 @@
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
-using VerticalSliceArchitecture.Common.Abstractions;
-using VerticalSliceArchitecture.Common.Abstractions.Repositories;
-using VerticalSliceArchitecture.Common.Endpoints;
-using VerticalSliceArchitecture.Common.Pipelines;
+using VerticalSliceArchitecture;
+using VerticalSliceArchitecture.Features;
 using VerticalSliceArchitecture.Infrastructure;
-using VerticalSliceArchitecture.Infrastructure.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 var host = builder.Host;
@@ -20,20 +15,11 @@ try
 {
     host.UseSerilog();
 
-    services.AddProblemDetails();
-    services.AddOpenApi();
-    services.AddEndpoints();
-    services.AddValidatorsFromAssembly(typeof(Program).Assembly);
-
-    services.AddDbContext<AppDbContext>(options =>
-    {
-        // Just for testing purposes
-        options.UseInMemoryDatabase("AppDb");
-    });
-
-    services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AppDbContext>());
-    services.AddScoped<IReadOnlyUserRepository, UserRepository>();
-    services.AddScoped<IReadWriteUserRepository, UserRepository>();
+    services
+        .AddProblemDetails()
+        .AddOpenApi()
+        .AddFeatures()
+        .AddInfrastructure();
 
     var app = builder.Build();
 
@@ -44,13 +30,10 @@ try
 
     app.MapOpenApi();
 
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI V1");
-    });
-
-    app.MapEndpoints();
-    app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+    app
+        .UseFeatures()
+        .UseSwaggerPage()
+        .UseMiddlewares();
 
     app.UseHttpsRedirection();
 
