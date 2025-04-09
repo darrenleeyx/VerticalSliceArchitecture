@@ -3,16 +3,16 @@ using VerticalSliceArchitecture.Common.Abstractions;
 
 namespace VerticalSliceArchitecture.Infrastructure;
 
-public static class DependencyInjection
+public static class InfrastructureRegistration
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection RegisterInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddPersistence(configuration);
+        services.RegisterPersistence(configuration);
 
         return services;
     }
 
-    private static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection RegisterPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
         {

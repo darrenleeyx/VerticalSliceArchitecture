@@ -5,7 +5,7 @@ namespace VerticalSliceArchitecture.Features;
 
 public static class FeatureRegistration
 {
-    public static IServiceCollection AddFeatures(this IServiceCollection services)
+    public static IServiceCollection RegisterFeatures(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(typeof(IFeatureMarker).Assembly);
 

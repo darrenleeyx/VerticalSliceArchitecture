@@ -1,5 +1,5 @@
 using Serilog;
-using VerticalSliceArchitecture;
+using VerticalSliceArchitecture.Common.Registrations;
 using VerticalSliceArchitecture.Features;
 using VerticalSliceArchitecture.Infrastructure;
 
@@ -17,11 +17,11 @@ try
 
         host.UseSerilog();
 
-        services
-            .AddProblemDetails()
-            .AddOpenApi()
-            .AddFeatures()
-            .AddInfrastructure(configuration);
+        services.AddProblemDetails()
+                .AddOpenApi();
+
+        services.RegisterFeatures()
+                .RegisterInfrastructure(configuration);
     }
 
     var app = builder.Build();
@@ -33,10 +33,9 @@ try
 
         app.MapOpenApi();
 
-        app
-            .UseFeatures()
-            .UseSwaggerPage()
-            .UseMiddlewares();
+        app.UseFeatures()
+           .UseSwaggerPage()
+           .UseMiddlewares();
 
         app.UseHttpsRedirection();
 

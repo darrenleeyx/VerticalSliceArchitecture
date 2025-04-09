@@ -1,4 +1,4 @@
-﻿namespace VerticalSliceArchitecture;
+﻿namespace VerticalSliceArchitecture.Common.Registrations;
 
 public static class SwaggerRegistration
 {

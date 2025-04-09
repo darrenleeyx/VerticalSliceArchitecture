@@ -1,6 +1,6 @@
 ﻿using VerticalSliceArchitecture.Common.Pipelines;
 
-namespace VerticalSliceArchitecture;
+namespace VerticalSliceArchitecture.Common.Registrations;
 
 public static class MiddlewareRegistration
 {
